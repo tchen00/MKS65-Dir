@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <dirent.h>
 
-char * readable(float s){
+void readable(float s){
   int i = 0;
   char * form[] = {"B", "KB", "MB", "GB"};
   while (s >= 1024){
@@ -32,20 +32,48 @@ void permission(mode_t mode, char * buffer){
 }
 */
 
-int main(){
+void dir_info(char *name){
   DIR * d;
   int size, rsize = 0;
-  d = opendir("dir");
-  struct direct * directory;
+  d = opendir(name);
+  struct dirent * entry;
+
+  struct stat *file = malloc(sizeof(struct stat));
+  entry = readdir(d);
 
   if (errno){
     printf("errno #%d: %s", errno, strerror(errno));
   }
 
-  struct stat *file = malloc(sizeof(struct stat));
-  directory = readdir(d);
+  while (entry){
+    char *fname = calloc(sizeof(char),100);
+    strcat(fname,name);
+    strcat(fname,"/");
+    strcat(fname,entry->d_name);
+    stat(name,file);
+    printf("File Name: %s\n",entry->d_name);
+    if(entry->d_type==4){
+      printf("File Type: Directory\n");
+    }
+    else if(entry->d_type==8){
+      printf("File Type: Regular\n");
+      rsize += file->st_size;
+    }
+    printf("File Size: %lld or ",file->st_size);
+    readable((float)file->st_size);
+    size += file->st_size;
+    entry = readdir(d);
+    printf("---------------\n");
+  }
 
+  printf("Total Regular File Size: %d bytes or ",rsize);
+  readable(rsize);
+  printf("Total File Size: %d bytes or ",size);
+  readable(size);
+  closedir(d);
+}
 
+int main(){
+  dir_info("dir");
   return 0;
-
 }
