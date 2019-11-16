@@ -34,7 +34,9 @@ void permission(mode_t mode, char * buffer){
 
 void dir_info(char *name){
   struct stat *file = malloc(sizeof(struct stat));
-  int size, rsize = 0;
+  int size = 0;
+  int rsize = 0;
+  // TESTING printf("%d", size);
   DIR * d;
   d = opendir(name);
   struct dirent * entry;
@@ -62,6 +64,7 @@ void dir_info(char *name){
     printf("File Size: %lld or ",file->st_size);
     readable((float)file->st_size);
     size += file->st_size;
+    // TESTING printf("%d", size);
     entry = readdir(d);
     printf("\n-------------------------------\n");
   }
@@ -78,7 +81,8 @@ void dir_info(char *name){
 
 int main(){
   char* name = malloc(50);
-  name = "./dir";
+  name = "./";
   dir_info(name);
+  printf("----------------------------------------------------\n");
   return 0;
 }
