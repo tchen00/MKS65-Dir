@@ -15,7 +15,7 @@ void readable(float s){
     s /= 1024;
     i++;
   }
-  printf("%f%s\n",s,form[i]);
+  printf("%f%s\t",s,form[i]);
   return;
 }
 
@@ -33,12 +33,11 @@ void permission(mode_t mode, char * buffer){
 */
 
 void dir_info(char *name){
-  DIR * d;
+  struct stat *file = malloc(sizeof(struct stat));
   int size, rsize = 0;
+  DIR * d;
   d = opendir(name);
   struct dirent * entry;
-
-  struct stat *file = malloc(sizeof(struct stat));
   entry = readdir(d);
 
   if (errno){
@@ -46,11 +45,12 @@ void dir_info(char *name){
   }
 
   while (entry){
+    // this will get the path NOT the file name
     char *fname = calloc(sizeof(char),100);
     strcat(fname,name);
     strcat(fname,"/");
     strcat(fname,entry->d_name);
-    stat(name,file);
+    stat(fname,file);
     printf("File Name: %s\n",entry->d_name);
     if(entry->d_type==4){
       printf("File Type: Directory\n");
@@ -63,17 +63,22 @@ void dir_info(char *name){
     readable((float)file->st_size);
     size += file->st_size;
     entry = readdir(d);
-    printf("---------------\n");
+    printf("\n-------------------------------\n");
   }
 
-  printf("Total Regular File Size: %d bytes or ",rsize);
+  printf("Total Directory (reg file) Size: %d bytes or ",rsize);
   readable(rsize);
+  printf("\n");
   printf("Total File Size: %d bytes or ",size);
   readable(size);
+  printf("\n");
   closedir(d);
+  return;
 }
 
 int main(){
-  dir_info("dir");
+  char* name = malloc(50);
+  name = "./dir";
+  dir_info(name);
   return 0;
 }
