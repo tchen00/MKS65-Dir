@@ -45,7 +45,7 @@ void dir_info(char *name){
   }
 
   while (entry){
-    // this will get the path NOT the file name
+    // im baby so this will get the path NOT the file name
     char *fname = calloc(sizeof(char),100);
     strcat(fname,name);
     strcat(fname,"/");
