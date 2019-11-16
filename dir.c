@@ -19,6 +19,7 @@ char * readable(float s){
   return;
 }
 
+/*
 void permission(mode_t mode, char * buffer){
   char perm[10] ="rwxrwxrwx";
   int i;
@@ -29,59 +30,20 @@ void permission(mode_t mode, char * buffer){
     }
   strcat(buffer, perm);
 }
+*/
 
 int main(){
-  struct stat file;
-  stat("stat.c", &file);
-  float size = (float) file.st_size;
-  char * loc = readable(size);
-  while (size >= 1024){
-    size /= 1024;
-  }
-  printf("File size (byte): %ld \n", file.st_size);
-  printf("File size (human readable form): %f %s \n", size, loc);
-  printf("Permissions (normal): %o\n", file.st_mode);
-
-  char permi[10];
-  permission(file.st_mode, permi);
-  printf("Permissions (ls -l): %s\n",permi);
-  printf("Time of Last Access: %s", ctime(&file.st_atime));
-  printf("-----------------------------------------------------\n");
   DIR * d;
+  int size, rsize = 0;
   d = opendir("dir");
-  struct dirent *entry;
+  struct direct * directory;
+
+  if (errno){
+    printf("errno #%d: %s", errno, strerror(errno));
+  }
 
   struct stat *file = malloc(sizeof(struct stat));
-  entry = readdir(d);
-  int s, rs = 0;
-  printf("---List of Files--- \n");
-
-  while(entry){
-    char *name = calloc(sizeof(char),100);
-    strcat(name,dir);
-    strcat(name,"/");
-    strcat(name,entry->d_name);
-    stat(name,file);
-
-    printf("File Name: %s\n",entry->d_name);
-    if(entry->d_type==4){
-      printf("File Type: Directory\n");
-    }
-    else if(entry->d_type==8){
-      printf("File Type: Regular\n");
-      rs += file->st_size;
-    }
-
-    printf("File Size: %lld or ",file->st_size);
-    readable((float)file->st_size);
-    s += file->st_size;
-
-    //updates entry with next file
-    entry=readdir(d);
-    printf("---------------\n");
-
-  }
-
+  directory = readdir(d);
 
 
   return 0;
