@@ -31,8 +31,25 @@ void permission(mode_t mode, char * buffer){
   strcat(buffer, perm);
 }
 */
-
+/*
 void dir_info(char *name){
+
+}
+*/
+int main( int argc, char *argv[]){
+  char* name = malloc(50);
+
+  // if there is no command line argument
+  if (argc <= 1){
+      printf("Directory (. for current directory): ");
+      fgets(name, 50, stdin);
+      name[strlen(name)-1] = 0; // ending
+  } else {
+      // command line argument
+      name = argv[1];
+  }
+  printf("Directory:  %s\n", name );
+
   struct stat *file = malloc(sizeof(struct stat));
   int size = 0;
   int rsize = 0;
@@ -40,11 +57,13 @@ void dir_info(char *name){
   DIR * d;
   d = opendir(name);
   struct dirent * entry;
-  entry = readdir(d);
 
-  if (errno){
-    printf("errno #%d: %s", errno, strerror(errno));
+  if (!d) {
+    printf("Error! %s. Invalid directory. \n", strerror(errno));
+    return 0;
   }
+
+  entry = readdir(d);
 
   while (entry){
     // im baby so this will get the path NOT the file name
@@ -76,13 +95,6 @@ void dir_info(char *name){
   readable(size);
   printf("\n");
   closedir(d);
-  return;
-}
-
-int main(){
-  char* name = malloc(50);
-  name = "./";
-  dir_info(name);
   printf("----------------------------------------------------\n");
   return 0;
 }
